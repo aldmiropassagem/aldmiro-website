@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://aldmiropassagem.vercel.app/sitemap.xml

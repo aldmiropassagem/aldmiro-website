@@ -105,6 +105,7 @@ const projects = [
 
 export default function App() {
   const isEnglish = !window.location.pathname.startsWith("/pt")
+  const siteUrl = "https://aldmiropassagem.vercel.app"
   const copy = isEnglish
     ? {
       navAbout: "About",
@@ -159,7 +160,79 @@ export default function App() {
 
   useEffect(() => {
     document.documentElement.lang = isEnglish ? "en" : "pt"
-  }, [isEnglish])
+
+    const title = isEnglish
+      ? "Aldmiro Passagem | Systems Analyst & Software Engineer"
+      : "Aldmiro Passagem | Analista de Sistemas e Engenheiro de Software"
+    const description = isEnglish
+      ? "Systems Analyst and software engineer focused on architecture, full-stack development, APIs, automation, and digital transformation."
+      : "Analista de Sistemas e engenheiro de software focado em arquitetura, desenvolvimento full stack, APIs, automação e transformação digital."
+
+    document.title = title
+
+    const updateMeta = (selector: string, attribute: string, value: string, property = false) => {
+      const element = document.head.querySelector(selector) ?? document.createElement(property ? "meta" : "meta")
+      element.setAttribute(property ? "property" : "name", property ? attribute : attribute)
+      element.setAttribute("content", value)
+      if (!document.head.contains(element)) {
+        document.head.appendChild(element)
+      }
+    }
+
+    updateMeta('meta[name="description"]', "description", description)
+    updateMeta('meta[name="keywords"]', "keywords", isEnglish
+      ? "Aldmiro Passagem, software engineer, systems analyst, full stack developer, React, Node.js, Python, architecture, digital transformation"
+      : "Aldmiro Passagem, analista de sistemas, engenheiro de software, desenvolvedor full stack, React, Node.js, Python, arquitetura, transformação digital")
+    updateMeta('meta[property="og:title"]', "og:title", title, true)
+    updateMeta('meta[property="og:description"]', "og:description", description, true)
+    updateMeta('meta[property="og:type"]', "og:type", "website", true)
+    updateMeta('meta[property="og:url"]', "og:url", `${siteUrl}${isEnglish ? "/" : "/pt"}`, true)
+    updateMeta('meta[property="og:image"]', "og:image", "https://avatars.githubusercontent.com/u/40764201?v=4", true)
+    updateMeta('meta[name="twitter:title"]', "twitter:title", title)
+    updateMeta('meta[name="twitter:description"]', "twitter:description", description)
+    updateMeta('meta[name="twitter:image"]', "twitter:image", "https://avatars.githubusercontent.com/u/40764201?v=4")
+
+    const existingCanonical = document.head.querySelector('link[rel="canonical"]') ?? document.createElement('link')
+    existingCanonical.setAttribute('rel', 'canonical')
+    existingCanonical.setAttribute('href', `${siteUrl}${isEnglish ? "/" : "/pt"}`)
+    if (!document.head.contains(existingCanonical)) {
+      document.head.appendChild(existingCanonical)
+    }
+
+    const existingScript = document.getElementById('seo-json-ld')
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      name: "Aldmiro Passagem",
+      jobTitle: isEnglish ? "Systems Analyst and Software Engineer" : "Analista de Sistemas e Engenheiro de Software",
+      description,
+      url: `${siteUrl}${isEnglish ? "/" : "/pt"}`,
+      sameAs: [
+        "https://github.com/aldmiropassagem",
+        "https://linkedin.com/in/aldmiropassagem",
+      ],
+      image: "https://avatars.githubusercontent.com/u/40764201?v=4",
+      knowsAbout: [
+        "React",
+        "Node.js",
+        "Python",
+        "TypeScript",
+        "Software Architecture",
+        "Full Stack Development",
+      ],
+      email: "mailto:aldmiropassagem@outlook.com",
+    }
+
+    if (existingScript) {
+      existingScript.textContent = JSON.stringify(jsonLd)
+    } else {
+      const script = document.createElement('script')
+      script.id = 'seo-json-ld'
+      script.type = 'application/ld+json'
+      script.textContent = JSON.stringify(jsonLd)
+      document.head.appendChild(script)
+    }
+  }, [isEnglish, siteUrl])
 
   const localizedStrengths = isEnglish
     ? [
